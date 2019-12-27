@@ -39,12 +39,12 @@ srcros(){
 
     elif [ $# -eq 2 ]; then
         if $srcrosver; then
-            if [ -f $HOME/Documents/$2_ws/devel/setup.bash ]; then
-                source $HOME/Documents/$2_ws/devel/setup.bash
-                export ROS_WORKSPACE=$HOME/Documents/$2_ws/
+            if [ -f $ws_dir/$2_ws/devel/setup.bash ]; then
+                source $ws_dir/$2_ws/devel/setup.bash
+                export ROS_WORKSPACE=$ws_dir/$2_ws/
                 echo -e "\e[01;32m>>>Successfully source ROS ${1^} and ${2} workspace.\e[0m"
-            elif [ -f $HOME/Documents/$2_ws/install/setup.bash ]; then
-                source $HOME/Documents/$2_ws/install/setup.bash
+            elif [ -f $ws_dir/$2_ws/install/setup.bash ]; then
+                source $ws_dir/$2_ws/install/setup.bash
                 echo -e "\e[01;32m>>>Successfully source ROS ${1^} and ${2} workspace.\e[0m"
 
             else
