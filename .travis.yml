@@ -1,0 +1,12 @@
+sudo: required
+dist: bionic
+language: generic
+
+before_install:
+  - sudo apt-get -qq -y install shellcheck
+  - sudo apt-get -qq -y install python3-pip
+  - sudo pip3 install bashate
+
+script:
+- shellcheck .ros_shortcut.bash
+- bashate .ros_shortcut.bash
