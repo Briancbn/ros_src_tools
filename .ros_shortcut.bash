@@ -12,10 +12,12 @@ export ROSCONSOLE_FORMAT='${node} [${severity}]: ${message}'
 
 ## Homing ros to workspace
 roshome(){
-    if roscd && [ -z $ROS_WORKSPACE ]; then
-        cd ../"$1"
+    if [ -z $ROS_WORKSPACE ]; then
+      if roscd; then
+        cd "../$1"
+      fi
     else
-        cd "$1"
+      cd $ROS_WORKSPACE
     fi
 }
 
@@ -45,6 +47,7 @@ srcros(){
                 echo -e "\e[01;32m>>>Successfully source ROS ${1^} and ${2} workspace.\e[0m"
             elif [ -f $ws_dir/$2_ws/install/setup.bash ]; then
                 source $ws_dir/$2_ws/install/setup.bash
+                export ROS_WORKSPACE=$ws_dir/$2_ws/
                 echo -e "\e[01;32m>>>Successfully source ROS ${1^} and ${2} workspace.\e[0m"
 
             else
