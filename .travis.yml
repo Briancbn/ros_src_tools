@@ -8,5 +8,5 @@ before_install:
   - sudo pip3 install bashate
 
 script:
-- shellcheck .ros_shortcut.bash
-- bashate .ros_shortcut.bash
+- shellcheck setup.sh .ros_shortcut.sh
+- bashate setup.sh .ros_shortcut.sh
