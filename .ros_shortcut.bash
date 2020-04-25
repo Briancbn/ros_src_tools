@@ -1,54 +1,69 @@
 #!/usr/bin/env bash
 
 ## available ROS version and ws directory
-#ros_distro_dir="/opt/ros"
-#ws_dir="$HOME/Documents"
 
 ## search ROS distro dir for distros
-avail_ros_distro=$(ls $ros_distro_dir | sed "s/\t/\ /")
+avail_ros_distro=$(find "${ros_distro_dir:=/opt/ros/}" \
+                        -maxdepth 1 \
+                        -mindepth 1 \
+                        -printf "%f\n")
 
-## rosout format 
-export ROSCONSOLE_FORMAT='${node} [${severity}]: ${message}'
+## rosout format
 
 ## Homing ros to workspace
-roshome(){
-    if [ -z $ROS_WORKSPACE ]; then
-      if roscd; then
-        cd "../$1"
-      fi
+function roshome {
+    if [ -z "$ROS_WORKSPACE" ]; then
+        if roscd; then
+            cd "../$1" || return
+        fi
     else
-      cd $ROS_WORKSPACE
+        cd "$ROS_WORKSPACE" || return
     fi
 }
 
-#alias chrome_remote_desktop="google-chrome --app=https://remotedesktop.google.com/support"
-#alias change_default_gcc_ver="update-alternatives --config gcc"
 
-srcros(){
-    local srcmelodic="source /opt/ros/melodic/setup.bash"
-    local srcrosver="source /opt/ros/$1/setup.bash"
+# Intelligently sourcing ROS environment
+function srcros {
+    local melodic_setup="/opt/ros/melodic/setup.bash"
+    local rosver_setup="/opt/ros/$1/setup.bash"
+    ws_dir=${ws_dir:="$HOME"}
     if [ $# -eq 0 ]; then
-        $srcmelodic
+        # shellcheck source=/dev/null
+        . "$melodic_setup"
         echo -e "\e[01;32m>>>Successfully source ROS Melodic by default.\e[0m"
 
     elif [ $# -eq 1 ]; then
-        if $srcrosver; then
+        if [ -f "$rosver_setup" ]; then
+            # shellcheck source=/dev/null
+            . "$rosver_setup"
             echo -e "\e[01;32m>>>Successfully source ROS ${1^}.\e[0m"
         else
-            $srcmelodic
+            # shellcheck source=/dev/null
+            . "$melodic_setup"
             echo -e "\e[01;32m>>>Successfully source ROS melodic instead.\e[0m"
         fi
 
     elif [ $# -eq 2 ]; then
-        if $srcrosver; then
-            if [ -f $ws_dir/$2_ws/devel/setup.bash ]; then
-                source $ws_dir/$2_ws/devel/setup.bash
-                export ROS_WORKSPACE=$ws_dir/$2_ws/
-                echo -e "\e[01;32m>>>Successfully source ROS ${1^} and ${2} workspace.\e[0m"
-            elif [ -f $ws_dir/$2_ws/install/setup.bash ]; then
-                source $ws_dir/$2_ws/install/setup.bash
-                export ROS_WORKSPACE=$ws_dir/$2_ws/
-                echo -e "\e[01;32m>>>Successfully source ROS ${1^} and ${2} workspace.\e[0m"
+        # shellcheck source=/dev/null
+        if [ -f "$rosver_setup" ]; then
+            # shellcheck source=/dev/null
+            . "$rosver_setup"
+            local ws_ros1_setup="$ws_dir"/"$2"_ws/devel/setup.bash
+            local ws_ros2_setup="$ws_dir"/"$2"_ws/install/setup.bash
+            if [ -f "$ws_ros2_setup" ]; then
+                # shellcheck source=/dev/null
+                . "$ws_ros2_setup"
+                export ROS_WORKSPACE; ROS_WORKSPACE="$ws_dir"/"$2"_ws/
+                local msg1="\e[01;32m>>>Successfully source ROS ${1^}"
+                local msg2="and ${2} workspace.\e[0m"
+                echo -e "$msg1""$msg2"
+            elif [ -f "$ws_ros1_setup" ]; then
+                # shellcheck source=/dev/null
+                . "$ws_ros1_setup"
+                export ROS_WORKSPACE; ROS_WORKSPACE="$ws_dir"/"$2"_ws/
+                local msg1="\e[01;32m>>>Successfully source ROS ${1^}"
+                local msg2="and ${2} workspace.\e[0m"
+                echo -e "$msg1""$msg2"
 
             else
                 echo -e "\e[01;31mError: Wrong workspace name!!!\e[0m"
@@ -57,19 +72,38 @@ srcros(){
         fi
     else
         echo -e "\e[01;31mError: Wrong num of params!!"
-        $srcmelodic
-        echo -e "\e[01;32m>>>Successfully source ROS Melodic by default.\e[0m"
+        return 1
     fi
+
+    if [ -f /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash ]; then
+        # shellcheck source=/dev/null
+        . /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
+    fi
+
+    format_ros1_console
 }
 
-_srcros_completions(){
+# shellcheck disable=2154
+function format_ros1_console {
+    export ROSCONSOLE_FORMAT
+    ROSCONSOLE_FORMAT="${node} [${severity}]: ${message}"
+}
+
+# Source ROS autocompletion function
+function _srcros_completions {
     if [ "${#COMP_WORDS[@]}" -eq "2" ]; then
-        COMPREPLY=($(compgen -W "${avail_ros_distro}" "${COMP_WORDS[1]}"))
+        mapfile -t \
+            COMPREPLY < <(compgen -W "${avail_ros_distro}" "${COMP_WORDS[1]}")
         return
     fi
-    local ws_suggestions=$(ls $ws_dir | sed "s/\t/\n/" | grep _ws | sed "s/_ws//" | sed "s/\n/\ /")
+    local ws_suggestions
+    ws_suggestions=$(find "${ws_dir:="$HOME"}" \
+                                    -maxdepth 1 \
+                                    -mindepth 1 \
+                                    -printf "%f\n" | sed "s/_ws//")
     if [ "${#COMP_WORDS[@]}" -eq "3" ]; then
-        COMPREPLY=($(compgen -W "${ws_suggestions}" "${COMP_WORDS[2]}"))
+        mapfile -t \
+            COMPREPLY < <(compgen -W "${ws_suggestions}" "${COMP_WORDS[2]}")
     fi
 }
 
