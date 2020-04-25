@@ -29,17 +29,17 @@ function srcros {
     ws_dir=${ws_dir:="$HOME"}
     if [ $# -eq 0 ]; then
         # shellcheck source=/dev/null
-        . $melodic_setup
+        . "$melodic_setup"
         echo -e "\e[01;32m>>>Successfully source ROS Melodic by default.\e[0m"
 
     elif [ $# -eq 1 ]; then
         if [ -f "$rosver_setup" ]; then
             # shellcheck source=/dev/null
-            . $rosver_setup
+            . "$rosver_setup"
             echo -e "\e[01;32m>>>Successfully source ROS ${1^}.\e[0m"
         else
             # shellcheck source=/dev/null
-            . $melodic_setup
+            . "$melodic_setup"
             echo -e "\e[01;32m>>>Successfully source ROS melodic instead.\e[0m"
         fi
 
@@ -47,19 +47,19 @@ function srcros {
         # shellcheck source=/dev/null
         if [ -f "$rosver_setup" ]; then
             # shellcheck source=/dev/null
-            . $rosver_setup
+            . "$rosver_setup"
             local ws_ros1_setup="$ws_dir"/"$2"_ws/devel/setup.bash
             local ws_ros2_setup="$ws_dir"/"$2"_ws/install/setup.bash
             if [ -f "$ws_ros2_setup" ]; then
                 # shellcheck source=/dev/null
-                . $ws_ros2_setup
+                . "$ws_ros2_setup"
                 export ROS_WORKSPACE; ROS_WORKSPACE="$ws_dir"/"$2"_ws/
                 local msg1="\e[01;32m>>>Successfully source ROS ${1^}"
                 local msg2="and ${2} workspace.\e[0m"
                 echo -e "$msg1""$msg2"
             elif [ -f "$ws_ros1_setup" ]; then
                 # shellcheck source=/dev/null
-                . $ws_ros1_setup
+                . "$ws_ros1_setup"
                 export ROS_WORKSPACE; ROS_WORKSPACE="$ws_dir"/"$2"_ws/
                 local msg1="\e[01;32m>>>Successfully source ROS ${1^}"
                 local msg2="and ${2} workspace.\e[0m"
@@ -92,7 +92,8 @@ function format_ros1_console {
 # Source ROS autocompletion function
 function _srcros_completions {
     if [ "${#COMP_WORDS[@]}" -eq "2" ]; then
-        COMPREPLY=($(compgen -W "${avail_ros_distro}" "${COMP_WORDS[1]}"))
+        mapfile -t \
+            COMPREPLY < <(compgen -W "${avail_ros_distro}" "${COMP_WORDS[1]}")
         return
     fi
     local ws_suggestions
@@ -101,7 +102,8 @@ function _srcros_completions {
                                     -mindepth 1 \
                                     -printf "%f\n" | sed "s/_ws//")
     if [ "${#COMP_WORDS[@]}" -eq "3" ]; then
-        COMPREPLY=($(compgen -W "${ws_suggestions}" "${COMP_WORDS[2]}"))
+        mapfile -t \
+            COMPREPLY < <(compgen -W "${ws_suggestions}" "${COMP_WORDS[2]}")
     fi
 }
 
