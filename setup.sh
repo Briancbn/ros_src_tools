@@ -1,4 +1,18 @@
 #!/bin/bash
+# Copyright 2020 Chen Bainian
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 dirpath=$(dirname "$0")
 
 myROSshortcuts_configure(){
@@ -33,7 +47,7 @@ myROSshortcuts_configure(){
             echo -e "\e[01;34m${avail_ws}\e[0m"
             read -r -p "press [Enter] to continue " _
             cp "$dirpath"/.ros_shortcut.sh "$HOME"/
-            sed -i "3 a ros_distro_dir=${ros_distro_dir}\nws_dir=${ws_dir}" \
+            sed -i "16 a ros_distro_dir=${ros_distro_dir}\nws_dir=${ws_dir}" \
                 "$HOME"/.ros_shortcut.sh
 
             echo -e "\e[01;32m>>>Successfully install myROSshortcutS.\e[0m"
@@ -66,3 +80,6 @@ else
     echo ". ~/.ros_shortcut.sh" >> "$HOME"/.bashrc
     myROSshortcuts_configure
 fi
+
+# shellcheck source=/dev/null
+. ./bashrc
