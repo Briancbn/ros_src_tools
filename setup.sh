@@ -15,7 +15,7 @@
 
 dirpath=$(dirname "$0")
 
-myROSshortcuts_configure(){
+function ros_src_tools_configure {
     read -r -e -p "Where is ROS installed? By Default [/opt/ros]: " \
                                                             ros_distro_dir
     if [ "$ros_distro_dir" = "" ]; then
@@ -68,17 +68,17 @@ if [ "$(grep ". ~/.ros_shortcut.sh" "${HOME}"/.bashrc)" != "" ]; then
             "myROSshortcuts are already installed, reconfigure?[y/N]: " \
             opt_recfg
         if [ "$opt_recfg" = "y" ] || [ "$opt_recfg" = "Y" ]; then
-            myROSshortcuts_configure
+            ros_src_tools
         fi
     else
         echo ".ros_shortcut.sh is missing! Lets reconfigure it for you"
         echo "Did you accidentally deleted it?"
-        myROSshortcuts_configure
+        ros_src_tools
     fi
 else
     echo "Starting to setup myROSshortcuts"
     echo ". ~/.ros_shortcut.sh" >> "$HOME"/.bashrc
-    myROSshortcuts_configure
+    ros_src_tools
 fi
 
 # shellcheck source=/dev/null
