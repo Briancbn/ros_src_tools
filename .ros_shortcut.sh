@@ -1,14 +1,26 @@
-#!/usr/bin/env bash
+#!/bin/bash
+# Copyright 2020 Chen Bainian
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 ## available ROS version and ws directory
 
 ## search ROS distro dir for distros
-avail_ros_distro=$(find "${ros_distro_dir:=/opt/ros/}" \
+avail_ros_distro=$(find "${ros_distro_dir:-"/opt/ros/"}" \
                         -maxdepth 1 \
                         -mindepth 1 \
+                        -type d \
                         -printf "%f\n")
-
-## rosout format
 
 ## Homing ros to workspace
 function roshome {
@@ -26,7 +38,7 @@ function roshome {
 function srcros {
     local melodic_setup="/opt/ros/melodic/setup.bash"
     local rosver_setup="/opt/ros/$1/setup.bash"
-    ws_dir=${ws_dir:="$HOME"}
+    ws_dir=${ws_dir:-"$HOME"}
     if [ $# -eq 0 ]; then
         # shellcheck source=/dev/null
         . "$melodic_setup"
@@ -53,14 +65,16 @@ function srcros {
             if [ -f "$ws_ros2_setup" ]; then
                 # shellcheck source=/dev/null
                 . "$ws_ros2_setup"
-                export ROS_WORKSPACE; ROS_WORKSPACE="$ws_dir"/"$2"_ws/
+                export ROS_WORKSPACE
+                ROS_WORKSPACE=$(eval echo "$ws_dir"/"$2"_ws/)
                 local msg1="\e[01;32m>>>Successfully source ROS ${1^}"
                 local msg2="and ${2} workspace.\e[0m"
                 echo -e "$msg1""$msg2"
             elif [ -f "$ws_ros1_setup" ]; then
                 # shellcheck source=/dev/null
                 . "$ws_ros1_setup"
-                export ROS_WORKSPACE; ROS_WORKSPACE="$ws_dir"/"$2"_ws/
+                export ROS_WORKSPACE
+                ROS_WORKSPACE=$(eval echo "$ws_dir"/"$2"_ws/)
                 local msg1="\e[01;32m>>>Successfully source ROS ${1^}"
                 local msg2="and ${2} workspace.\e[0m"
                 echo -e "$msg1""$msg2"
@@ -97,10 +111,12 @@ function _srcros_completions {
         return
     fi
     local ws_suggestions
-    ws_suggestions=$(find "${ws_dir:="$HOME"}" \
+    ws_suggestions=$(find "${ws_dir:-"$HOME"}" \
                                     -maxdepth 1 \
                                     -mindepth 1 \
-                                    -printf "%f\n" | sed "s/_ws//")
+                                    -type d \
+                                    -printf "%f\n" \
+                                    | grep "_ws" | sed "s/_ws//")
     if [ "${#COMP_WORDS[@]}" -eq "3" ]; then
         mapfile -t \
             COMPREPLY < <(compgen -W "${ws_suggestions}" "${COMP_WORDS[2]}")
