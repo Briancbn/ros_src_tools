@@ -88,7 +88,7 @@ function srcros {
                 export ROS_WORKSPACE
                 ROS_WORKSPACE=$(eval echo "$ws_dir"/"$2"_ws/)
                 local msg1="\e[01;32m>>>Successfully source ROS ${1^}"
-                local msg2="and ${2} workspace.\e[0m"
+                local msg2=" and ${2} workspace.\e[0m"
                 echo -e "$msg1""$msg2"
             elif [ -f "$ws_ros1_setup" ]; then
                 # shellcheck source=/dev/null
@@ -96,7 +96,7 @@ function srcros {
                 export ROS_WORKSPACE
                 ROS_WORKSPACE=$(eval echo "$ws_dir"/"$2"_ws/)
                 local msg1="\e[01;32m>>>Successfully source ROS ${1^}"
-                local msg2="and ${2} workspace.\e[0m"
+                local msg2=" and ${2} workspace.\e[0m"
                 echo -e "$msg1""$msg2"
 
             else
@@ -123,6 +123,11 @@ function format_ros1_console {
     ROSCONSOLE_FORMAT="${node} [${severity}]: ${message}"
 }
 
+# shellcheck disable=2154
+function rosdep_install_all {
+    rosdep install --from-paths src --ignore-src -y --rosdistro "${ROS_DISTRO}"
+}
+
 # Source ROS autocompletion function
 function _srcros_completions {
     if [ "${#COMP_WORDS[@]}" -eq "2" ]; then
@@ -142,7 +147,5 @@ function _srcros_completions {
             COMPREPLY < <(compgen -W "${ws_suggestions}" "${COMP_WORDS[2]}")
     fi
 }
-
-alias rosdep_install_all="rosdep install --from-paths src --ignore-src -y"
 
 complete -F _srcros_completions srcros
