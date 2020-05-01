@@ -50,7 +50,8 @@ function ros_src_tools_configure {
             sed -i "16 a ros_distro_dir=${ros_distro_dir}\nws_dir=${ws_dir}" \
                 "$HOME"/.ros_shortcut.sh
 
-            echo -e "\e[01;32m>>>Successfully install myROSshortcutS.\e[0m"
+            echo -e "\e[01;32m>>>Successfully install ros_src_tools!\e[0m"
+            echo -e "\e[01;32m>>>Please reopen your terminal.\e[0m"
         else
             echo "Invalid path, aborted"
         fi
@@ -68,18 +69,21 @@ if [ "$(grep ". ~/.ros_shortcut.sh" "${HOME}"/.bashrc)" != "" ]; then
             "myROSshortcuts are already installed, reconfigure?[y/N]: " \
             opt_recfg
         if [ "$opt_recfg" = "y" ] || [ "$opt_recfg" = "Y" ]; then
-            ros_src_tools
+            ros_src_tools_configure
         fi
     else
         echo ".ros_shortcut.sh is missing! Lets reconfigure it for you"
         echo "Did you accidentally deleted it?"
-        ros_src_tools
+        ros_src_tools_configure
     fi
 else
     echo "Starting to setup myROSshortcuts"
-    echo ". ~/.ros_shortcut.sh" >> "$HOME"/.bashrc
-    ros_src_tools
+    {
+        echo ""
+        echo "# ROS source tools";
+        echo "if [ -f ~/.ros_shortcut.sh ]; then";
+        echo "  . ~/.ros_shortcut.sh";
+        echo "fi"
+    } >> "$HOME"/.bashrc
+    ros_src_tools_configure
 fi
-
-# shellcheck source=/dev/null
-. ./bashrc
