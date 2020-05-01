@@ -45,7 +45,27 @@ function srcros {
         echo -e "\e[01;32m>>>Successfully source ROS Melodic by default.\e[0m"
 
     elif [ $# -eq 1 ]; then
-        if [ -f "$rosver_setup" ]; then
+        if [ "$1" = "-h" ]; then
+            echo "usage: srcros [-h] [distro_name] [workspace_name]"
+            echo ""
+            echo "Sourcing available ROS distro and ROS workspace."
+            echo ""
+            echo "  srcros"
+            echo "    Source Melodic setup.bash by default."
+            echo ""
+            echo "  srcros [distro_name]"
+            echo "    Source available distro name found in ${ros_distro_dir}."
+            echo ""
+            echo "  srcros [distron_name] [workspace_name]"
+            echo "    Source available distro name found in ${ros_distro_dir}"
+            echo "    and then source the workspace name (ends with '_ws')"
+            echo "    found in ${ws_dir}."
+            echo "    Workspace name don't need suffix."
+            echo ""
+            echo "  srcros -h"
+            echo "    show help information"
+            return 0
+        elif [ -f "$rosver_setup" ]; then
             # shellcheck source=/dev/null
             . "$rosver_setup"
             echo -e "\e[01;32m>>>Successfully source ROS ${1^}.\e[0m"
