@@ -118,9 +118,10 @@ function srcros {
 }
 
 # shellcheck disable=2154
+# shellcheck disable=2016
 function format_ros1_console {
     export ROSCONSOLE_FORMAT
-    ROSCONSOLE_FORMAT="${node} [${severity}]: ${message}"
+    ROSCONSOLE_FORMAT='${node} [${severity}]: ${message}'
 }
 
 # shellcheck disable=2154
