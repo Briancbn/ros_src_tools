@@ -80,19 +80,19 @@ function srcros {
         if [ -f "$rosver_setup" ]; then
             # shellcheck source=/dev/null
             . "$rosver_setup"
-            local ws_ros1_setup="$ws_dir"/"$2"_ws/devel/setup.bash
-            local ws_ros2_setup="$ws_dir"/"$2"_ws/install/setup.bash
-            if [ -f "$ws_ros2_setup" ]; then
+            local ws_devel_setup="$ws_dir"/"$2"_ws/devel/setup.bash
+            local ws_install_setup="$ws_dir"/"$2"_ws/install/setup.bash
+            if [ -f "$ws_install_setup" ]; then
                 # shellcheck source=/dev/null
-                . "$ws_ros2_setup"
+                . "$ws_install_setup"
                 export ROS_WORKSPACE
                 ROS_WORKSPACE=$(eval echo "$ws_dir"/"$2"_ws/)
                 local msg1="\e[01;32m>>>Successfully source ROS ${1^}"
                 local msg2=" and ${2} workspace.\e[0m"
                 echo -e "$msg1""$msg2"
-            elif [ -f "$ws_ros1_setup" ]; then
+            elif [ -f "$ws_devel_setup" ]; then
                 # shellcheck source=/dev/null
-                . "$ws_ros1_setup"
+                . "$ws_devel_setup"
                 export ROS_WORKSPACE
                 ROS_WORKSPACE=$(eval echo "$ws_dir"/"$2"_ws/)
                 local msg1="\e[01;32m>>>Successfully source ROS ${1^}"
@@ -114,7 +114,13 @@ function srcros {
         . /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
     fi
 
+    if [ -f /usr/share/colcon_cd/function/colcon_cd.sh ]; then
+        # shellcheck source=/dev/null
+        source /usr/share/colcon_cd/function/colcon_cd.sh
+    fi
+
     format_ros1_console
+    force_ros2_color
 }
 
 # shellcheck disable=2154
@@ -124,9 +130,19 @@ function format_ros1_console {
     ROSCONSOLE_FORMAT='${node} [${severity}]: ${message}'
 }
 
+function force_ros2_color {
+    export RCUTILS_COLORIZED_OUTPUT
+    RCUTILS_COLORIZED_OUTPUT=1
+}
+
 # shellcheck disable=2154
 function rosdep_install_all {
-    rosdep install --from-paths src --ignore-src -y --rosdistro "${ROS_DISTRO}"
+    rosdep install \
+        --from-paths src \
+        --ignore-src \
+        -y \
+        --rosdistro "${ROS_DISTRO}" \
+        "$@"
 }
 
 # Source ROS autocompletion function

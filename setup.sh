@@ -14,6 +14,8 @@
 # limitations under the License.
 
 dirpath=$(dirname "$0")
+dirfullhomepath=$(dirname "$(readlink -f "$0")")
+dirfullpath="${dirfullhomepath/#$HOME/'~'}"
 
 function ros_src_tools_configure {
     read -r -e -p "Where is ROS installed? By Default [/opt/ros]: " \
@@ -31,7 +33,8 @@ function ros_src_tools_configure {
         echo "Are these your ROS Distros: "
         echo -e "\e[01;34m${avail_ros_distro}\e[0m"
         read -r -p "press [Enter] to continue " _
-        read -r -e -p "Where are your workspaces? By Default [$HOME]: " ws_dir
+        read -r -e -i "$HOME" \
+            -p "Where are your workspaces? By Default [$HOME]: " ws_dir
         if [ "$ws_dir" = "" ]; then
             ws_dir=$HOME
         fi
@@ -46,9 +49,9 @@ function ros_src_tools_configure {
             echo "Are these your ROS workspaces (ends with _ws):"
             echo -e "\e[01;34m${avail_ws}\e[0m"
             read -r -p "press [Enter] to continue " _
-            cp "$dirpath"/.ros_shortcut.sh "$HOME"/
+            cp "$dirpath"/.ros_shortcut.sh "$dirpath"/.ros_shortcut_impl.sh
             sed -i "16 a ros_distro_dir=${ros_distro_dir}\nws_dir=${ws_dir}" \
-                "$HOME"/.ros_shortcut.sh
+                "$dirpath"/.ros_shortcut_impl.sh
 
             echo -e "\e[01;32m>>>Successfully install ros_src_tools!\e[0m"
             echo -e "\e[01;32m>>>Please reopen your terminal.\e[0m"
@@ -63,10 +66,10 @@ function ros_src_tools_configure {
 }
 
 
-if [ "$(grep ". ~/.ros_shortcut.sh" "${HOME}"/.bashrc)" != "" ]; then
-    if [ -f "$HOME/.ros_shortcut.sh" ]; then
+if grep -q ". $dirfullpath/.ros_shortcut_impl.sh" "$HOME/.bashrc"; then
+    if [ -f "$dirpath/.ros_shortcut_impl.sh" ]; then
         read -r -p \
-            "myROSshortcuts are already installed, reconfigure?[y/N]: " \
+            "ros_src_tools are already installed, reconfigure?[y/N]: " \
             opt_recfg
         if [ "$opt_recfg" = "y" ] || [ "$opt_recfg" = "Y" ]; then
             ros_src_tools_configure
@@ -81,8 +84,8 @@ else
     {
         echo ""
         echo "# ROS source tools";
-        echo "if [ -f ~/.ros_shortcut.sh ]; then";
-        echo "  . ~/.ros_shortcut.sh";
+        echo "if [ -f $dirfullpath/.ros_shortcut_impl.sh ]; then";
+        echo "  . $dirfullpath/.ros_shortcut_impl.sh";
         echo "fi"
     } >> "$HOME"/.bashrc
     ros_src_tools_configure

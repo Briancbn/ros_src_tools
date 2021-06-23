@@ -1,0 +1,24 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  shellcheck-bashate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+
+    - name: Install Shellcheck Bashate
+      run: |
+        sudo apt update && sudo apt install -y shellcheck
+        python -m pip install --upgrade bashate
+
+    - name: Shellcheck
+      run: |
+        shellcheck *.sh .[!.]*.sh
+
+    - name: Bashate
+      run: |
+        bashate -v *.sh .[!.]*.sh
