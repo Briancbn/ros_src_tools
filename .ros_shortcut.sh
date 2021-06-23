@@ -132,7 +132,12 @@ function force_ros2_color {
 
 # shellcheck disable=2154
 function rosdep_install_all {
-    rosdep install --from-paths src --ignore-src -y --rosdistro "${ROS_DISTRO}"
+    rosdep install \
+        --from-paths src \
+        --ignore-src \
+        -y \
+        --rosdistro "${ROS_DISTRO}" \
+        "$@"
 }
 
 # Source ROS autocompletion function
