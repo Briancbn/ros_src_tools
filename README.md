@@ -1,6 +1,5 @@
 # ROS Sourcing Tools
-
-[![Build Status](https://travis-ci.com/Briancbn/ros_src_tools.svg?branch=master)](https://travis-ci.com/Briancbn/ros_src_tools)
+[![CI](https://github.com/Briancbn/ros_src_tools/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Briancbn/ros_src_tools/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 A Bash tool for easily and dynamically sourcing ROS and ROS2 environment.
@@ -14,8 +13,8 @@ git clone https://github.com/Briancbn/ros_src_tools.git .ros_src_tools
 ```
 Follow the instructions to setup up your `ros_src_tools`.
 
-Note that by default, the program will search for 
-- ROS Installation inside `/opt/ros` 
+Note that by default, the program will search for
+- ROS Installation inside `/opt/ros`
 - ROS workspaces (folder ends with **_ws**) in `~/`
 
 You can change these configurations during the setup.
@@ -23,7 +22,7 @@ You can change these configurations during the setup.
 ## Usage
 ![ros_src_tools_demo](./media/ros_src_tools_demo.gif)
 ### **srcros**
-    
+
 You can run `srcros -h` to show help information
 ```
 usage: srcros [-h] [distro_name] [workspace_name]
@@ -46,7 +45,7 @@ srcros -h
     show help information
 ```
 ### **roshome**
-Change to your latest sourced workspace location. 
+Change to your latest sourced workspace location.
 
 This location is defined automatically when you run `srcros`
 
