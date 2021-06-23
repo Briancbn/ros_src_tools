@@ -114,6 +114,11 @@ function srcros {
         . /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
     fi
 
+    if [ -f /usr/share/colcon_cd/function/colcon_cd.sh ]; then
+        # shellcheck source=/dev/null
+        source /usr/share/colcon_cd/function/colcon_cd.sh
+    fi
+
     format_ros1_console
     force_ros2_color
 }
