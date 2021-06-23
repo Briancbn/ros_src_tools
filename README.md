@@ -56,7 +56,16 @@ rosdep install --from-paths src --ignore-src -y --rosdistro "${ROS_DISTRO}"
 ```
 
 ## Uninstall
-Simply delete the files created.
+Simply delete the repository you have downloaded.
 ```bash
-rm -rf ~/.ros_src_tools ~/.ros_shortcut.sh
+rm -rf ~/.ros_src_tools
+```
+
+Delete the following lines under `~.bashrc`
+
+```bash
+# ROS source tools
+if [ -f ~/ros_src_tools/.ros_shortcut_impl.sh ]; then
+  . ~/ros_src_tools/.ros_shortcut_impl.sh
+fi
 ```
