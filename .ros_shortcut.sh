@@ -115,6 +115,7 @@ function srcros {
     fi
 
     format_ros1_console
+    force_ros2_color
 }
 
 # shellcheck disable=2154
@@ -122,6 +123,11 @@ function srcros {
 function format_ros1_console {
     export ROSCONSOLE_FORMAT
     ROSCONSOLE_FORMAT='${node} [${severity}]: ${message}'
+}
+
+function force_ros2_color {
+    export RCUTILS_COLORIZED_OUTPUT
+    RCUTILS_COLORIZED_OUTPUT=1
 }
 
 # shellcheck disable=2154
