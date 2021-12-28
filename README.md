@@ -44,10 +44,15 @@ srcros [distron_name] [workspace_name]
 srcros -h
     show help information
 ```
-### **roshome**
+### **roshome / colcon_cd**
 Change to your latest sourced workspace location.
 
 This location is defined automatically when you run `srcros`
+
+### colcon_cd autocomplete setup
+Install the [debian pre-release from my fork](https://github.com/Briancbn/colcon-cd/releases/tag/0.1.2) to enable autocomplete capability.
+
+After installation simply use `srcros` command again, the autocompletion for colcon_cd is also enabled.
 
 ### **rosdep_intstall_all**
 This is equivalent to running the following command
