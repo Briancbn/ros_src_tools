@@ -87,6 +87,8 @@ function srcros {
                 . "$ws_install_setup"
                 export ROS_WORKSPACE
                 ROS_WORKSPACE=$(eval echo "$ws_dir"/"$2"_ws/)
+                export _colcon_cd_root
+                _colcon_cd_root="$ROS_WORKSPACE"
                 local msg1="\e[01;32m>>>Successfully source ROS ${1^}"
                 local msg2=" and ${2} workspace.\e[0m"
                 echo -e "$msg1""$msg2"
@@ -95,6 +97,8 @@ function srcros {
                 . "$ws_devel_setup"
                 export ROS_WORKSPACE
                 ROS_WORKSPACE=$(eval echo "$ws_dir"/"$2"_ws/)
+                export _colcon_cd_root
+                _colcon_cd_root="$ROS_WORKSPACE"
                 local msg1="\e[01;32m>>>Successfully source ROS ${1^}"
                 local msg2=" and ${2} workspace.\e[0m"
                 echo -e "$msg1""$msg2"
